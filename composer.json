@@ -1,0 +1,11 @@
+{
+    "name": "eric-chau/rest-skill",
+    "require-dev": {
+        "phpunit/phpunit": "4.7.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jarvis\\Skill\\Rest\\": "src/"
+        }
+    }
+}
