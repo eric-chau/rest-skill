@@ -75,4 +75,14 @@ class PaginationHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->handler->handle($this->anno);
     }
+
+    public function testHandleRangeWithAnotherMaxLimit()
+    {
+        $this->anno->maxLimit = 1001;
+        $this->req->query->set('range', '0-1000');
+
+        $this->handler->handle($this->anno);
+
+        $this->assertSame(1001, $this->req->attributes->get('maxLimit'));
+    }
 }
