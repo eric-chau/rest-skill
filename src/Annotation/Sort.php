@@ -9,4 +9,5 @@ class Sort
 {
     public $sort = [];
     public $desc = [];
+    public $sanitize = true;
 }

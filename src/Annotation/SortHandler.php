@@ -25,6 +25,7 @@ class SortHandler extends AbstractHandler
     {
         parent::handle($annotation);
 
+        $sanitize = true === $annotation->sanitize;
         $defaultSort = (array) $annotation->sort;
         $defaultDesc = (array) $annotation->desc;
 
@@ -35,6 +36,7 @@ class SortHandler extends AbstractHandler
             $sort = $defaultSort;
         }
 
+        $sort = $sanitize ? array_map([$this, 'sanitizeFieldName'], $sort) : $sort;
         $sort = array_fill_keys($sort, 'asc');
 
         $desc = $this->req->query->get('desc');
@@ -44,6 +46,7 @@ class SortHandler extends AbstractHandler
             $desc = $defaultDesc;
         }
 
+        $desc = $sanitize ? array_map([$this, 'sanitizeFieldName'], $desc) : $desc;
         foreach ($desc as $field) {
             if (isset($sort[$field])) {
                 $sort[$field] = 'desc';
@@ -61,5 +64,10 @@ class SortHandler extends AbstractHandler
     public function supports($annotation)
     {
         return $annotation instanceof Sort;
+    }
+
+    protected function sanitizeFieldName($name)
+    {
+        return lcfirst(implode('', array_map('ucfirst', explode('_', $name))));
     }
 }
