@@ -51,7 +51,7 @@ class SortHandler extends AbstractHandler
             if (isset($sort[$field])) {
                 $sort[$field] = 'desc';
             } else {
-                throw new RestHttpException("Cannot order '$field' by desc cause it is missing from sort field list.");
+                throw new RestHttpException("Cannot order by '$field' desc cause it is missing from sort list.");
             }
         }
 
