@@ -71,20 +71,35 @@ class SortHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->req->attributes->has('sort'));
 
         $this->assertSame([
-            'foo' => 'asc',
-            'bar' => 'asc',
+            'foo'    => 'asc',
+            'bar'    => 'asc',
             'jarvis' => 'desc',
         ], $this->req->attributes->get('sort'));
     }
 
     /**
      * @expectedException        Jarvis\Skill\Rest\Exception\RestHttpException
-     * @expectedExceptionMessage Cannot order 'foo' by desc cause it is missing from sort field list.
+     * @expectedExceptionMessage Cannot order by 'foo' desc cause it is missing from sort list.
      */
     public function testProvideUnknownDescFieldThrowException()
     {
         $this->anno->desc = ['foo'];
 
         $this->handler->handle($this->anno);
+    }
+
+    public function testSortSanitizeOption()
+    {
+        $this->anno->sort = ['foo_bar'];
+
+        $this->handler->handle($this->anno);
+
+        $this->assertSame(['fooBar' => 'asc'], $this->req->attributes->get('sort'));
+
+        $this->anno->sanitize = false;
+
+        $this->handler->handle($this->anno);
+
+        $this->assertSame(['foo_bar' => 'asc'], $this->req->attributes->get('sort'));
     }
 }
