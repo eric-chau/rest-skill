@@ -2,22 +2,13 @@
 
 namespace Jarvis\Skill\Rest\Annotation;
 
-use Jarvis\Skill\Annotation\Handler\AbstractHandler;
 use Jarvis\Skill\Rest\Exception\RestHttpException;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Eric Chau <eriic.chau@gmail.com>
  */
-class SortHandler extends AbstractHandler
+class SortHandler extends AbstractRestHandler
 {
-    private $req;
-
-    public function __construct(Request $req)
-    {
-        $this->req = $req;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -64,10 +55,5 @@ class SortHandler extends AbstractHandler
     public function supports($annotation)
     {
         return $annotation instanceof Sort;
-    }
-
-    protected function sanitizeFieldName($name)
-    {
-        return lcfirst(implode('', array_map('ucfirst', explode('_', $name))));
     }
 }

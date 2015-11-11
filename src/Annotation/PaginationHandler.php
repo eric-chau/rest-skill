@@ -2,22 +2,13 @@
 
 namespace Jarvis\Skill\Rest\Annotation;
 
-use Jarvis\Skill\Annotation\Handler\AbstractHandler;
 use Jarvis\Skill\Rest\Exception\RestHttpException;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Eric Chau <eriic.chau@gmail.com>
  */
-class PaginationHandler extends AbstractHandler
+class PaginationHandler extends AbstractRestHandler
 {
-    private $req;
-
-    public function __construct(Request $req)
-    {
-        $this->req = $req;
-    }
-
     /**
      * {@inheritdoc}
      */
