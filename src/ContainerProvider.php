@@ -6,6 +6,7 @@ use Jarvis\Jarvis;
 use Jarvis\Skill\DependencyInjection\ContainerProviderInterface;
 use Jarvis\Skill\EventBroadcaster\ExceptionEvent;
 use Jarvis\Skill\EventBroadcaster\JarvisEvents;
+use Jarvis\Skill\Rest\Annotation\CriteriaHandler;
 use Jarvis\Skill\Rest\Annotation\PaginationHandler;
 use Jarvis\Skill\Rest\Annotation\SortHandler;
 use Jarvis\Skill\Rest\Exception\RestHttpException;
@@ -28,6 +29,10 @@ class ContainerProvider implements ContainerProviderInterface
 
         $jarvis['annotation.handler.rest.sort'] = function ($jarvis) {
             return new SortHandler($jarvis->request);
+        };
+
+        $jarvis['annotation.handler.rest.criteria'] = function ($jarvis) {
+            return new CriteriaHandler($jarvis->request);
         };
 
         $jarvis->addReceiver(JarvisEvents::EXCEPTION_EVENT, function (ExceptionEvent $event) {
