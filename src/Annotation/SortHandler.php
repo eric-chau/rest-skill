@@ -17,7 +17,7 @@ class SortHandler extends AbstractRestHandler
         parent::handle($annotation);
 
         $sanitize = true === $annotation->sanitize;
-        $accepted = (array) $annotation->accepted;
+        $accepted = false === $annotation->accepted ? false : (array) $annotation->accepted;
         $defaultSort = (array) $annotation->sort;
         $defaultDesc = (array) $annotation->desc;
 
@@ -28,12 +28,14 @@ class SortHandler extends AbstractRestHandler
             $sort = $defaultSort;
         }
 
-        foreach ($sort as $name) {
-            if (!in_array($name, $accepted)) {
-                throw new RestHttpException(sprintf(
-                    "You are not allowed to sort by \"$name\". Available: %s.",
-                    0 === count($accepted) ? 'none' : implode(', ', $accepted)
-                ));
+        if (false !== $accepted) {
+            foreach ($sort as $name) {
+                if (!in_array($name, $accepted)) {
+                    throw new RestHttpException(sprintf(
+                        "You are not allowed to sort by \"$name\". Available: %s.",
+                        0 === count($accepted) ? 'none' : implode(', ', $accepted)
+                    ));
+                }
             }
         }
 

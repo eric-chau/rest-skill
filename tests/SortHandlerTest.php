@@ -106,11 +106,12 @@ class SortHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException        Jarvis\Skill\Rest\Exception\RestHttpException
-     * @expectedExceptionMessage You are not allowed to sort by "foo_bar". Available: none.
+     * @expectedExceptionMessage You are not allowed to sort by "bar". Available: foo.
      */
     public function testSortWithNotAcceptedField()
     {
-        $this->anno->sort = ['foo_bar'];
+        $this->anno->accepted = ['foo'];
+        $this->anno->sort = ['bar'];
 
         $this->handler->handle($this->anno);
     }

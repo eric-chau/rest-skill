@@ -39,11 +39,12 @@ class CriteriaHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException        Jarvis\Skill\Rest\Exception\RestHttpException
-     * @expectedExceptionMessage You are not allowed to filter by "id". Available: none.
+     * @expectedExceptionMessage You are not allowed to filter by "category_id". Available: id.
      */
     public function testHandleNotAcceptedCriteriaThrowsException()
     {
-        $this->req->query->set('id', 123);
+        $this->anno->accepted = ['id'];
+        $this->req->query->set('category_id', 123);
 
         $this->handler->handle($this->anno);
     }

@@ -7,6 +7,6 @@ namespace Jarvis\Skill\Rest\Annotation;
  */
 class Criteria
 {
-    public $accepted = [];
+    public $accepted = false;
     public $sanitize = true;
 }
