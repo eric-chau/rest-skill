@@ -7,6 +7,7 @@ namespace Jarvis\Skill\Rest\Annotation;
  */
 class Sort
 {
+    public $accepted = [];
     public $sort = [];
     public $desc = [];
     public $sanitize = true;

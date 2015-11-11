@@ -39,7 +39,7 @@ class SortHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testHandleWithDefaultscSort()
     {
-        $this->anno->sort = ['foo', 'bar'];
+        $this->anno->accepted = $this->anno->sort = ['foo', 'bar'];
         $this->handler->handle($this->anno);
 
         $this->assertTrue($this->req->attributes->has('sort'));
@@ -49,7 +49,7 @@ class SortHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testHandleWithDefaultAscAndDescSort()
     {
-        $this->anno->sort = ['foo', 'bar'];
+        $this->anno->accepted = $this->anno->sort = ['foo', 'bar'];
         $this->anno->desc = 'foo';
         $this->handler->handle($this->anno);
 
@@ -63,7 +63,8 @@ class SortHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testHandleWithProvidedAscAndDescSort()
     {
-        $this->req->query->set('sort', 'foo,bar,jarvis');
+        $this->anno->accepted = ['foo', 'bar', 'jarvis'];
+        $this->req->query->set('sort', implode(',', $this->anno->accepted));
         $this->req->query->set('desc', 'jarvis');
 
         $this->handler->handle($this->anno);
@@ -90,7 +91,7 @@ class SortHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testSortSanitizeOption()
     {
-        $this->anno->sort = ['foo_bar'];
+        $this->anno->accepted = $this->anno->sort = ['foo_bar'];
 
         $this->handler->handle($this->anno);
 
@@ -101,5 +102,16 @@ class SortHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler->handle($this->anno);
 
         $this->assertSame(['foo_bar' => 'asc'], $this->req->attributes->get('sort'));
+    }
+
+    /**
+     * @expectedException        Jarvis\Skill\Rest\Exception\RestHttpException
+     * @expectedExceptionMessage You are not allowed to sort by "foo_bar". Available: none.
+     */
+    public function testSortWithNotAcceptedField()
+    {
+        $this->anno->sort = ['foo_bar'];
+
+        $this->handler->handle($this->anno);
     }
 }

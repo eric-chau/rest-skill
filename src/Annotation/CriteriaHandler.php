@@ -38,8 +38,7 @@ class CriteriaHandler extends AbstractRestHandler
 
             if (!in_array($key, $accepted)) {
                 throw new RestHttpException(sprintf(
-                    'You are not allowed to filter by "%s". Available: %s.',
-                    $key,
+                    "You are not allowed to filter by \"$key\". Available: %s.",
                     0 === count($accepted) ? 'none' : implode(', ', $accepted)
                 ));
             }
