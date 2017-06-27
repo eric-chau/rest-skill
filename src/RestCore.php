@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jarvis\Skill\Rest;
 
 use Jarvis\Jarvis;
 use Jarvis\Skill\DependencyInjection\ContainerProviderInterface;
+use Jarvis\Skill\EventBroadcaster\BroadcasterInterface;
 use Jarvis\Skill\EventBroadcaster\ExceptionEvent;
-use Jarvis\Skill\EventBroadcaster\JarvisEvents;
 use Jarvis\Skill\Rest\Annotation\CriteriaHandler;
 use Jarvis\Skill\Rest\Annotation\PaginationHandler;
 use Jarvis\Skill\Rest\Annotation\SortHandler;
@@ -16,27 +18,28 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @author Eric Chau <eric.chau@gmail.com>
  */
-class ContainerProvider implements ContainerProviderInterface
+class RestCore implements ContainerProviderInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function hydrate(Jarvis $jarvis)
+    public function hydrate(Jarvis $app)
     {
-        $jarvis['annotation.handler.rest.pagination'] = function ($jarvis) {
-            return new PaginationHandler($jarvis->request);
+        $request = $app['request'];
+        $app['annotation.handler.rest.pagination'] = function () use ($request): PaginationHandler {
+            return new PaginationHandler($request);
         };
 
-        $jarvis['annotation.handler.rest.sort'] = function ($jarvis) {
-            return new SortHandler($jarvis->request);
+        $app['annotation.handler.rest.sort'] = function () use ($request): SortHandler {
+            return new SortHandler($request);
         };
 
-        $jarvis['annotation.handler.rest.criteria'] = function ($jarvis) {
-            return new CriteriaHandler($jarvis->request);
+        $app['annotation.handler.rest.criteria'] = function () use ($request): CriteriaHandler {
+            return new CriteriaHandler($request);
         };
 
-        $jarvis->addReceiver(JarvisEvents::EXCEPTION_EVENT, function (ExceptionEvent $event) {
-            $exception = $event->getException();
+        $app->on(BroadcasterInterface::EXCEPTION_EVENT, function (ExceptionEvent $event) {
+            $exception = $event->exception();
             if (!($exception instanceof RestHttpException)) {
                 return;
             }
@@ -45,6 +48,6 @@ class ContainerProvider implements ContainerProviderInterface
                 ['reason' => $exception->getMessage()],
                 0 === $exception->getCode() ? Response::HTTP_INTERNAL_SERVER_ERROR : $exception->getCode()
             ));
-        }, Jarvis::RECEIVER_HIGH_PRIORITY);
+        }, BroadcasterInterface::RECEIVER_HIGH_PRIORITY);
     }
 }

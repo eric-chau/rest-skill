@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jarvis\Skill\Rest\Annotation;
 
 use Jarvis\Skill\Rest\Exception\RestHttpException;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Eric Chau <eriic.chau@gmail.com>
@@ -16,25 +19,33 @@ class PaginationHandler extends AbstractRestHandler
     {
         parent::handle($annotation);
 
-        $maxLimit = $annotation->maxLimit;
+        $start = $annotation->start;
         $limit = $annotation->limit;
-        $offset = $annotation->offset;
-        $range = $this->req->query->get('range');
+        $maxLimit = $annotation->maxLimit;
+        $range = $this->request->query->get('range', '');
         if (1 === preg_match('#^([0-9]+)-([0-9]+)$#', $range, $matches)) {
-            list($range, $offset, $limit) = $matches;
-            if ($limit < $offset) {
-                throw new RestHttpException("Range offset cannot be greater than limit ($range).", 400);
+            [$range, $start, $limit] = $matches;
+            $start = (int) $start;
+            $limit = (int) $limit;
+            if ($limit < $start) {
+                throw new RestHttpException(
+                    sprintf('Range start cannot be greater than limit (%s).', $range),
+                    Response::HTTP_BAD_REQUEST
+                );
             }
 
-            $limit = $limit - $offset + 1;
+            $limit = $limit - $start + 1;
             if ($maxLimit < $limit) {
-                throw new RestHttpException("Range limit cannot exceed $maxLimit ($range).", 400);
+                throw new RestHttpException(
+                    sprintf('Range limit cannot exceed %d (%s).', $maxLimit, $range),
+                    Response::HTTP_BAD_REQUEST
+                );
             }
         }
 
-        $this->req->attributes->add([
+        $this->request->attributes->add([
+            'start'    => (int) $start,
             'limit'    => (int) $limit,
-            'offset'   => (int) $offset,
             'maxLimit' => (int) $maxLimit,
         ]);
     }
@@ -42,7 +53,7 @@ class PaginationHandler extends AbstractRestHandler
     /**
      * {@inheritdoc}
      */
-    public function supports($annotation)
+    public function supports($annotation): bool
     {
         return $annotation instanceof Pagination;
     }

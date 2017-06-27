@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jarvis\Skill\Rest\Annotation;
 
 use Jarvis\Skill\Rest\Criteria\AndArray;
@@ -31,7 +33,7 @@ class CriteriaHandler extends AbstractRestHandler
         $accepted = false === $annotation->accepted ? false : (array) $annotation->accepted;
 
         $criteria = [];
-        foreach ($this->req->query->all() as $key => $value) {
+        foreach ($this->request->query->all() as $key => $value) {
             if (in_array($key, self::RESERVED_WORDS)) {
                 continue;
             }
@@ -52,13 +54,13 @@ class CriteriaHandler extends AbstractRestHandler
             $criteria[$sanitize ? $this->sanitizeFieldName($key) : $key] = $value;
         }
 
-        $this->req->attributes->add(['criteria' => $criteria]);
+        $this->request->attributes->add(['criteria' => $criteria]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports($annotation)
+    public function supports($annotation): bool
     {
         return $annotation instanceof Criteria;
     }

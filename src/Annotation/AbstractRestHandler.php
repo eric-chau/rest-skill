@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jarvis\Skill\Rest\Annotation;
 
 use Jarvis\Skill\Annotation\Handler\AbstractHandler;
@@ -13,11 +15,11 @@ abstract class AbstractRestHandler extends AbstractHandler
     /**
      * @var Request
      */
-    protected $req;
+    protected $request;
 
-    public function __construct(Request $req)
+    public function __construct(Request $request)
     {
-        $this->req = $req;
+        $this->request = $request;
     }
 
     /**

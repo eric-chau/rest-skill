@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jarvis\Skill\Rest\Annotation;
 
 use Jarvis\Skill\Rest\Exception\RestHttpException;
@@ -21,7 +23,7 @@ class SortHandler extends AbstractRestHandler
         $defaultSort = (array) $annotation->sort;
         $defaultDesc = (array) $annotation->desc;
 
-        $sort = $this->req->query->get('sort');
+        $sort = $this->request->query->get('sort');
         if (is_string($sort)) {
             $sort = explode(',', $sort);
         } else {
@@ -42,7 +44,7 @@ class SortHandler extends AbstractRestHandler
         $sort = $sanitize ? array_map([$this, 'sanitizeFieldName'], $sort) : $sort;
         $sort = array_fill_keys($sort, 'asc');
 
-        $desc = $this->req->query->get('desc');
+        $desc = $this->request->query->get('desc');
         if (is_string($desc)) {
             $desc = explode(',', $desc);
         } else {
@@ -58,13 +60,13 @@ class SortHandler extends AbstractRestHandler
             }
         }
 
-        $this->req->attributes->add(['sort' => $sort]);
+        $this->request->attributes->add(['sort' => $sort]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function supports($annotation)
+    public function supports($annotation): bool
     {
         return $annotation instanceof Sort;
     }
