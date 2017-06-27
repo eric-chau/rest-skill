@@ -14,7 +14,7 @@ class SortHandler extends AbstractRestHandler
     /**
      * {@inheritdoc}
      */
-    public function handle($annotation)
+    public function handle($annotation): void
     {
         parent::handle($annotation);
 
